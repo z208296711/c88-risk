@@ -1,0 +1,58 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>%magenta(%d) %highlight(%-5p) [%blue(%t)] [%yellow(%logger{30}) %white(%M) %boldYellow(%line)] - %m%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <springProfile name="k8s_dev | k8s_stg | k8s_pre | k8s_prod | k8s_local">
+    <appender name="logstash" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <!--                <pattern>%magenta(%d) %highlight(%-5p) [%blue(%t)] [%yellow(%logger{30}) %white(%M) %boldYellow(%line)] - %m%n</pattern>-->
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",  
+                        "requestId": "%X{requestId}",
+                        "remoteIp": "%X{remoteIp}",
+                        "traceId": "%X{X-B3-TraceId:-}",
+                        "spanId": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentSpanId:-}",
+                        "thread": "%thread",
+                        "class": "%logger{40}",
+                        "line": "%line",
+                        "message": "%message",
+                        "stack_trace": "%exception"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+    </springProfile>
+
+
+    <springProfile name="default | local | k8s_local">
+        <logger name="com.c88.*" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="k8s_dev | k8s_stg | k8s_pre | k8s_prod">
+        <logger name="com.c88.*" level="INFO" additivity="false">
+            <appender-ref ref="logstash"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="logstash"/>
+        </root>
+    </springProfile>
+
+</configuration>

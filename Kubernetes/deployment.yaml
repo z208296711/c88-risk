@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: _CI_PROJECT_NAME_
+  namespace: c88
+  labels:
+    app: _CI_PROJECT_NAME_
+spec:
+  selector:
+    app: _CI_PROJECT_NAME_
+  ports:
+  - protocol: TCP
+    port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: _CI_PROJECT_NAME_
+  namespace: c88
+spec:
+  # replicas: 2
+  selector:
+      matchLabels:
+        app: _CI_PROJECT_NAME_
+  template:
+    metadata:
+      labels:
+        app: _CI_PROJECT_NAME_
+    spec:
+      containers:
+      - name: _CI_PROJECT_NAME_
+        image: _CONTAINER_IMAGE_
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        # resources:
+        #   limits:
+        #     cpu: "500m"
+        #     memory: "256Mi"
+        #   requests:
+        #     cpu: "50m"
+        #     memory: "128Mi"
+        env:
+        # - name: JAVA_OPTS
+        #   value: "-Xmx2Gi"
+        - name: JAVA_ENV
+          value: "k8s__CI_ENVIRONMENT_NAME_"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /actuator/health/liveness
+        #     port: 8080
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 1
+        # readinessProbe:
+        #   httpGet:
+        #     path: /actuator/health/readiness
+        #     port: 8080
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 1

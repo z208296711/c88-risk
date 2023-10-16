@@ -1,0 +1,80 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /risk
+spring:
+  application:
+    name: risk-qa
+  datasource:
+    url: jdbc:mysql://10.182.145.23:3306/c88?serverTimezone=GMT&useUnicode=true&characterEncoding=utf8&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: toxnMCaR7ABydiij74QoKNF7
+  redis:
+    host: 10.182.144.3
+    port: 6379
+    password: cc6c1ad6-0fb8-420f-8c05-00afa195b17e
+    database: 0
+  rabbitmq:
+    host: c88-rabbitmq
+    port: 5672
+    username: default_user_waTxIGEPnMjEqg2Q12f
+    password: mNfAlXCjddAfUTNWDQ8R9BtjNs2TX8gT
+  kafka:
+    listener:
+      ack-mode: MANUAL
+    bootstrap-servers: 10.251.222.1:9092,10.251.222.2:9092,10.251.222.3:9092
+    consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+    cloud:
+      function:
+        definition: betRecordSettled;betRecordSettledFromLastWithdraw;betRecordMonthly
+      stream:
+        kafka:
+          streams:
+            binder:
+              configuration:
+                default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                commit.interval.ms: 1000
+              functions:
+                betRecordSettled:
+                  applicationId: ${spring.application.name}-betRecordSettled
+                betRecordMonthly:
+                  applicationId: ${spring.application.name}-betRecordMonthly
+                betRecordSettledFromLastWithdraw:
+                  applicationId: ${spring.application.name}-betRecordSettledFromLastWithdraw
+        bindings:
+          betRecordSettled-in-0:
+            destination: bet_record
+          betRecordMonthly-in-0:
+            destination: bet_record
+          betRecordSettledFromLastWithdraw-in-0:
+            destination: bet_record
+          betRecordSettledFromLastWithdraw-in-1:
+            destination: withdraw
+
+redisson:
+  address: redis://10.182.144.3:6379
+  password: cc6c1ad6-0fb8-420f-8c05-00afa195b17e
+
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#hystrix
+feign:
+  circuitbreaker:
+    enabled: true
+
+
+payment.url: http://c88-payment:7778/payment

@@ -1,0 +1,43 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+/dockerStuff/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+/.metadata/
+bin
+*.log
+/member-api/src/main/resources/logback-spring-local.xml
+/member-api/src/main/resources/application-local_ray.properties
+logs
+/member-api/src/main/java/com/tt289/member/RemoveDuplicate.java
+member-api/src/main/resources/application-local_dev.properties
+batch-task/src/main/resources/application-local_dev.properties
+member-api/src/main/resources/application-local_dev.properties
+member-api/src/main/resources/application-local_dev.properties
